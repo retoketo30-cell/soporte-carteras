@@ -4,27 +4,27 @@ from google.genai import types
 import pypdf
 import os
 
-# 1. CONFIGURACIÓN DE LA PÁGINA (Estética estilo Chat)
-st.set_page_config(page_title="Asistente Personalizado El Secreto de las Carteras", page_icon="👜", layout="centered")
+# 1. CONFIGURACIÓN DE LA PÁGINA
+st.set_page_config(page_title="Soporte Pack Ebooks Carteras", page_icon="👜", layout="centered")
 
-st.title("👜 Soporte Experto en Carteras en Malla de Plástico (Canva Plastic)")
+st.title("👜 Soporte Experto - Pack de Ebooks")
 st.subheader("¡Hola! Te doy una mano con cualquier duda de tus libros.")
 
-import os
-
-# Buscamos la clave en los Secrets de Streamlit
+# 2. CONFIGURACIÓN SEGURA DE LA API KEY
+# Verificamos si la app corre en Streamlit Cloud o de forma local
 if "GEMINI_API_KEY" in st.secrets:
+    # Entorno de producción (Streamlit Cloud Secrets)
     os.environ["GEMINI_API_KEY"] = st.secrets["GEMINI_API_KEY"]
-    client = genai.Client()
 else:
-    # Si estás probando local en tu compu, pegá tu clave acá entre las comillas
-    LOCAL_KEY = "AQ.Ab8RN6JdXgmexu3sQz_Pco894eh144kSvXEv3uzSMkT7HuIRWQ"
-    if LOCAL_KEY and LOCAL_KEY != "TU_CLAVE_LOCAL_AQUÍ":
-        os.environ["GEMINI_API_KEY"] = LOCAL_KEY
-        client = genai.Client()
-    else:
-        st.error("Por favor, configura tu API Key de Google AI Studio.")
-        st.stop()
+    # Entorno local (Su computadora). Pegue su clave aquí si prueba localmente:
+    os.environ["GEMINI_API_KEY"] = "AQ.Ab8RN6JdXgmexu3sQz_Pco894eh144kSvXEv3uzSMkT7HuIRWQ"
+
+# Inicialización del cliente oficial sin pasar parámetros (toma la variable de entorno automáticamente)
+try:
+    client = genai.Client()
+except Exception as e:
+    st.error(f"Error al inicializar el cliente de Gemini: {e}")
+    st.stop()
 
 # 3. FUNCIÓN PARA LEER TODOS LOS PDFS DE LA CARPETA
 @st.cache_resource
