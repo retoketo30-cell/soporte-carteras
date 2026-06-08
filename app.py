@@ -10,17 +10,21 @@ st.set_page_config(page_title="Asistente Personalizado El Secreto de las Cartera
 st.title("👜 Soporte Experto en Carteras en Malla de Plástico (Canva Plastic)")
 st.subheader("¡Hola! Te doy una mano con cualquier duda de tus libros.")
 
-# 2. COLOCÁ TU API KEY DE GOOGLE ACÁ
-# Para desarrollo local, pegá tu clave entre las comillas. 
-# (Luego para subirlo a internet de forma segura usaremos otra opción).
-API_KEY = "AQ.Ab8RN6JXgsKR7ExKfG2RTytcCHAHTI_C2eZ4xHB9VFUGxNpLoQ"
+import os
 
-# Inicializamos el cliente oficial de Gemini si la API key está presente
-if API_KEY and API_KEY != "TU_API_KEY_AQUÍ":
-    client = genai.Client(api_key=API_KEY)
+# Buscamos la clave en los Secrets de Streamlit
+if "GEMINI_API_KEY" in st.secrets:
+    os.environ["GEMINI_API_KEY"] = st.secrets["GEMINI_API_KEY"]
+    client = genai.Client()
 else:
-    st.error("Por favor, configura tu API Key de Google AI Studio en el código.")
-    st.stop()
+    # Si estás probando local en tu compu, pegá tu clave acá entre las comillas
+    LOCAL_KEY = "AQ.Ab8RN6JdXgmexu3sQz_Pco894eh144kSvXEv3uzSMkT7HuIRWQ"
+    if LOCAL_KEY and LOCAL_KEY != "TU_CLAVE_LOCAL_AQUÍ":
+        os.environ["GEMINI_API_KEY"] = LOCAL_KEY
+        client = genai.Client()
+    else:
+        st.error("Por favor, configura tu API Key de Google AI Studio.")
+        st.stop()
 
 # 3. FUNCIÓN PARA LEER TODOS LOS PDFS DE LA CARPETA
 @st.cache_resource
